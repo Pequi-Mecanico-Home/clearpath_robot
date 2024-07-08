@@ -38,6 +38,10 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 
+from ament_index_python.packages import get_package_share_directory
+from clearpath_config.common.utils.yaml import read_yaml
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+
 from clearpath_platform_msgs.msg import Power
 from sensor_msgs.msg import BatteryState
 
@@ -51,13 +55,12 @@ from clearpath_diagnostics.battery_state.battery import Battery
 class BatteryStateEstimator(Node):
     def __init__(self, setup_path='/etc/clearpath'):
         super().__init__('battery_state_estimator')
-        self.setup_path = setup_path
 
-        # Define paths
-        self.config_path = os.path.join(self.setup_path, 'robot.yaml')
+        pkg_clearpath_diagnostics = get_package_share_directory('clearpath_diagnostics')
+        robot_yaml = PathJoinSubstitution([pkg_clearpath_diagnostics, 'config', 'robot.yaml'])
+        config = read_yaml(robot_yaml.perform(None))
+        self.clearpath_config = ClearpathConfig(config)
 
-        # Parse YAML into config
-        self.clearpath_config = ClearpathConfig(self.config_path)
         self.platform = self.clearpath_config.platform.get_platform_model()
         self.battery_model = self.clearpath_config.platform.battery.model
         self.battery_configuration = self.clearpath_config.platform.battery.configuration
@@ -84,7 +87,8 @@ class BatteryStateEstimator(Node):
 
 
 def main():
-    setup_path = BaseGenerator.get_args()
+
+    setup_path = 'hardware_ws/src/clearpath_robot/clearpath_diagnostics/config'
     rclpy.init()
 
     bsp = BatteryStateEstimator(setup_path)
