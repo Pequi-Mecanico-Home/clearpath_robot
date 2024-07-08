@@ -40,7 +40,7 @@ from rclpy.qos import qos_profile_sensor_data
 
 from ament_index_python.packages import get_package_share_directory
 from clearpath_config.common.utils.yaml import read_yaml
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution
 
 from clearpath_platform_msgs.msg import Power
 from sensor_msgs.msg import BatteryState
