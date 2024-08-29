@@ -1,17 +1,4 @@
 /**:
-  analyzers:
-    ros__parameters:
-      path: Diagnostics
-      battery:
-        type: diagnostic_aggregator/AnalyzerGroup
-        path: Batteries
-        analyzers:
-          battery:
-            type: diagnostic_aggregator/GenericAnalyzer
-            path: Battery_State
-            contains: [ 'Battery' ]
-
-  analyzers:
     ros__parameters:
       path: Costa_diagnostics
       sensors:
@@ -21,15 +8,15 @@
           cameras:
             type: diagnostic_aggregator/GenericAnalyzer
             path: Cameras
-            contains: [ 'camera' ]
-          lidar2d:
-            type: diagnostic_aggregator/GenericAnalyzer
-            path: Lidar2D
-            contains: [ 'lidar2d' ]
+            contains: [ 'd435i' ]
           lidar3d:
             type: diagnostic_aggregator/GenericAnalyzer
             path: Lidar3D
             contains: [ 'lidar3d' ]
+          lidar2d:
+            type: diagnostic_aggregator/GenericAnalyzer
+            path: LIDAR2D
+            contains: [ 'scan' ] 
           imu:
             type: diagnostic_aggregator/GenericAnalyzer
             path: IMU
@@ -42,6 +29,22 @@
         type: diagnostic_aggregator/GenericAnalyzer
         path: CPU_State
         contains: [ 'cpu_monitor'] 
+      ram:
+        type: diagnostic_aggregator/GenericAnalyzer
+        path: RAM_State
+        contains: [ 'ram_monitor']
+      hd:
+        type: diagnostic_aggregator/GenericAnalyzer
+        path: HD_State
+        contains: [ 'hd_monitor']
+      battery:
+        type: diagnostic_aggregator/GenericAnalyzer
+        path: Batteries
+        contains: [ 'Battery' ]
+      # lidar2d:
+      #     type: diagnostic_aggregator/GenericAnalyzer
+      #     path: LIDAR2D
+      #     contains: [ 'scan' ] 
 
             
 

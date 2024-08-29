@@ -51,7 +51,7 @@ class MisskalDiagnosticUpdater(Node):
         # Subscribe to topics
         self.battery_sub = self.create_subscription(
             BatteryState,
-            'battery_state_publisher',
+            '/misskal/battery_state_publisher',
             self.battery_status_callback_home,
             qos_profile_sensor_data
         )
@@ -59,7 +59,7 @@ class MisskalDiagnosticUpdater(Node):
         #VERIFICAR QUAL TÓPICO PUBLICA O LIDAR
         self.lidar_sub = self.create_subscription(
             LaserScan,
-            'scan',
+            '/misskal/scan',
             self.lidar_callback,
             qos_profile_sensor_data
         )
@@ -68,6 +68,13 @@ class MisskalDiagnosticUpdater(Node):
         self.color_image_sub = self.create_subscription(
             Image,
             'oakd/rgb/preview/image_raw',
+            self.color_image_callback,
+            qos_profile_sensor_data
+        )
+
+        self.color_image_sub = self.create_subscription(
+            Image,
+            '/misskal/camera/color/image_raw',
             self.color_image_callback,
             qos_profile_sensor_data
         )
@@ -99,21 +106,31 @@ class MisskalDiagnosticUpdater(Node):
         self.updater.add('Jackal Battery Voltage', self.check_battery_voltage_jackal)
         self.updater.add('Home Battery Percentage', self.check_battery_percentage_home)
         self.updater.add('Home Battery Voltage', self.check_battery_voltage_home)
-        #self.updater.add('IMU', self.check_imu_freq)
+        # self.updater.add('IMU', self.check_imu_freq)
         # self.updater.add('Wheel Status', self.check_wheel_status)
         # self.updater.add('Dock Status', self.check_dock_status)
         # self.updater.add('Hazard Detections', self.check_hazard_detections)
 
         # Add Frequency status
-        self.lidar_freq = HeaderlessTopicDiagnostic('/scan',
+        self.lidar_freq = HeaderlessTopicDiagnostic('/misskal/scan',
                                                     self.updater,
                                                     FrequencyStatusParam(
                                                         self.lidar_freq_bounds, 0.1, 10))
 
-        # self.color_image_freq = HeaderlessTopicDiagnostic('/color/preview/image',
-        #                                                   self.updater,
-        #                                                   FrequencyStatusParam(
-        #                                                       self.camera_freq_bounds, 0.1, 10))
+        self.color_image_freq = HeaderlessTopicDiagnostic('/color/preview/image',
+                                                          self.updater,
+                                                          FrequencyStatusParam(
+                                                              self.camera_freq_bounds, 0.1, 10))
+
+        self.color_image_freq = HeaderlessTopicDiagnostic('oakd/rgb/preview/image_raw',
+                                                          self.updater,
+                                                          FrequencyStatusParam(
+                                                              self.camera_freq_bounds, 0.1, 10))
+        
+        self.color_image_freq = HeaderlessTopicDiagnostic('/misskal/camera/color/image_raw',
+                                                          self.updater,
+                                                          FrequencyStatusParam(
+                                                              self.camera_freq_bounds, 0.1, 10))
 
         #DESCOBRIR QUAL TÓPICO DEVEMOS PASSAR
         self.imu_freq = HeaderlessTopicDiagnostic('/misskal/sensors/imu_0/data_raw',
@@ -161,7 +178,7 @@ class MisskalDiagnosticUpdater(Node):
     
     #CHECAR NOSSOS VALORES
     def check_battery_voltage_home(self, stat):
-        if self.battery_voltage_home > 38.0:
+        if self.battery_voltage_home > 38:
             stat.summary(DiagnosticStatus.OK, 'OK')
         elif self.battery_voltage_home > 37.5:
             stat.summary(DiagnosticStatus.WARN, 'Low')
@@ -223,8 +240,8 @@ class MisskalDiagnosticUpdater(Node):
         self.battery_voltage_jackal = msg.voltage
 
     def battery_status_callback_home(self, msg):
-        self.battery_percentage_jackal = msg.percentage
-        self.battery_voltage_jackal = msg.voltage
+        self.battery_percentage_home = msg.percentage
+        self.battery_voltage_home = msg.voltage
 
     # def wheel_status_callback(self, msg):
     #     self.wheels_enabled = msg.wheels_enabled

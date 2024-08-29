@@ -86,7 +86,7 @@ class BatteryStateEstimator(Node):
 def main():
     setup_path = BaseGenerator.get_args()
     rclpy.init()
-
+    
     bsp = BatteryStateEstimator(setup_path)
 
     rclpy.spin(bsp)
