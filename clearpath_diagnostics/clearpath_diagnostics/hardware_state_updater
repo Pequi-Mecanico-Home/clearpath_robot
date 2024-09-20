@@ -51,7 +51,7 @@ class MisskalDiagnosticUpdater(Node):
         # Subscribe to topics
         self.battery_sub = self.create_subscription(
             BatteryState,
-            '/misskal/battery_state_publisher',
+            '/misskal/publisher_batmiss',
             self.battery_status_callback_home,
             qos_profile_sensor_data
         )
